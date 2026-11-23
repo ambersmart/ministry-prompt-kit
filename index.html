@@ -32,14 +32,33 @@
   a { color: var(--mid); }
   .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
 
+  /* Top bar: matches smartmetrixdata.com */
+  .topbar { background: var(--ink); color: #fff; position: relative; z-index: 5; }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; height: 83px; }
+  .topbar .logo img { display: block; height: 30px; width: auto; }
+  .topbar ul { list-style: none; display: flex; align-items: center; gap: 30px; margin: 0; padding: 0; }
+  .topbar ul a { color: #fff; text-decoration: none; font-size: 16px; font-weight: 600; }
+  .topbar ul a:hover { color: var(--sage); }
+  .topbar ul a.cta { background: var(--sage); color: #000; padding: 14px 26px; border-radius: 6px; font-family: "Fraunces", Georgia, serif; font-weight: 500; font-size: 15px; }
+  .topbar ul a.cta:hover { background: #b4c8bf; color: #000; }
+  .menu-btn { display: none; background: none; border: 0; cursor: pointer; padding: 8px; }
+  .menu-btn span { display: block; width: 28px; height: 2px; background: #fff; margin: 6px 0; }
+  @media (max-width: 860px) {
+    .menu-btn { display: block; }
+    .topbar ul { display: none; position: absolute; top: 83px; left: 0; right: 0; flex-direction: column; align-items: flex-start; gap: 0; background: var(--ink); padding: 8px 24px 24px; }
+    .topbar ul.open { display: flex; }
+    .topbar ul li { width: 100%; }
+    .topbar ul a { display: block; padding: 14px 0; font-size: 18px; }
+    .topbar ul a.cta { display: inline-block; margin-top: 12px; padding: 14px 26px; }
+  }
+
   /* Hero */
-  header { background: var(--wash); border-bottom: 1px solid var(--line); }
-  .hero { padding: 64px 24px 48px; }
+  header { border-bottom: 1px solid var(--line); }
+  .hero { padding: 72px 24px 44px; }
   .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
-  .hero h1 { font-size: clamp(34px, 5vw, 52px); max-width: 16ch; }
-  .hero p { max-width: 58ch; color: var(--mid); font-size: 19px; margin: 18px 0 0; }
-  .steps { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 30px; font-size: 15px; color: var(--mid); }
-  .steps span b { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 13px; margin-right: 8px; }
+  .hero h1 { font-size: clamp(32px, 4.4vw, 46px); font-weight: 500; max-width: 30ch; letter-spacing: -.01em; }
+  .hero p { max-width: 80ch; color: var(--ink); font-size: 18px; margin: 20px 0 0; }
+  .hero .sig { font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--mid); font-size: 17px; margin-top: 16px; }
 
   /* Filters */
   .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 24px; }
@@ -139,16 +158,25 @@
 </head>
 <body>
 
+<nav class="topbar" aria-label="Smart Metrix Data">
+  <div class="wrap">
+    <a class="logo" href="https://www.smartmetrixdata.com/"><img src="https://images.squarespace-cdn.com/content/v1/615763ef6f404d3ad0844bb9/ec4bf04b-d155-4af7-97dd-846397227763/SmartMetrix-Logo.png?format=500w" alt="Smart Metrix Data home"></a>
+    <button class="menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
+    <ul id="menu">
+      <li><a href="https://www.smartmetrixdata.com/about-us">About</a></li>
+      <li><a href="https://www.smartmetrixdata.com/client-stories">Client Stories</a></li>
+      <li><a href="https://www.smartmetrixdata.com/what-counts">What Counts</a></li>
+      <li><a href="https://www.smartmetrixdata.com/contact-us">Contact</a></li>
+      <li><a class="cta" href="https://www.smartmetrixdata.com/contact-us">Bring a Question</a></li>
+    </ul>
+  </div>
+</nav>
+
 <header>
   <div class="wrap hero">
-    <div class="eyebrow">Free from Smart Metrix Data</div>
-    <h1>The Ministry AI Prompt Kit</h1>
-    <p>Ten fill-in-the-blank prompts that help church leaders get clear, useful answers from AI tools like ChatGPT and Claude, especially when it comes to your data.</p>
-    <div class="steps">
-      <span><b>1</b>Pick a task</span>
-      <span><b>2</b>Fill in the blanks</span>
-      <span><b>3</b>Copy and paste into your AI tool</span>
-    </div>
+    <h1>Ask better questions about your ministry.</h1>
+    <p>Most church staff I work with have tried ChatGPT and walked away with something vague. Usually the problem isn't the tool. It's the question. These are the prompts I'd hand you if we were sitting at the same table: pick one, fill in your details, and paste it in.</p>
+    <p class="sig">Amber Smart, Smart Metrix Data</p>
   </div>
 </header>
 
@@ -466,6 +494,13 @@ document.addEventListener("submit", async e => {
     btn.disabled = false; btn.textContent = "Send me prompts";
     toast("Something went wrong. Please try again.");
   }
+});
+
+// Phone menu toggle
+$("menu-btn").addEventListener("click", () => {
+  const open = $("menu").classList.toggle("open");
+  $("menu-btn").setAttribute("aria-expanded", open);
+  $("menu-btn").setAttribute("aria-label", open ? "Close menu" : "Open menu");
 });
 
 renderFilters();
