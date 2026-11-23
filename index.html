@@ -53,12 +53,28 @@
   }
 
   /* Hero */
+  /* Hero: mirrors the smartmetrixdata.com home page hero */
   header { border-bottom: 1px solid var(--line); }
-  .hero { padding: 72px 24px 44px; }
-  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
-  .hero h1 { font-size: clamp(32px, 4.4vw, 46px); font-weight: 500; max-width: 30ch; letter-spacing: -.01em; }
-  .hero p { max-width: 80ch; color: var(--ink); font-size: 18px; margin: 20px 0 0; }
-  .hero .sig { font-family: "Fraunces", Georgia, serif; font-style: italic; color: var(--mid); font-size: 17px; margin-top: 16px; }
+  .hero { padding: 64px 24px 72px; display: grid; grid-template-columns: 1.35fr 1fr; gap: 64px; align-items: center; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .17em; font-size: 11px; font-weight: 800; color: var(--mid); margin-bottom: 18px; }
+  .hero h1 { font-size: clamp(40px, 5vw, 64px); font-weight: 500; line-height: 1.13; letter-spacing: -.035em; }
+  .hero h1 span { color: var(--mid); }
+  .hero p { color: var(--mid); font-size: 17px; line-height: 1.75; margin: 22px 0 0; max-width: 52ch; }
+  .hero-actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+  .hero-actions .primary { background: var(--mid); color: #fff; font-size: 13px; font-weight: 800; padding: 15px 20px; border-radius: 4px; text-decoration: none; }
+  .hero-actions .primary:hover { background: var(--ink); }
+  .hero-actions .text { color: var(--ink); font-size: 13px; font-weight: 800; text-decoration: none; }
+  .hero-actions .text:hover { color: var(--mid); }
+  .hero .helper { font-size: 12px; margin-top: 14px; }
+  .photo-card { background: #E4EBE7; padding: 16px; border-radius: 7px; box-shadow: 17px 17px 0 #D3DFD9; max-width: 368px; justify-self: end; margin-right: 17px; }
+  .photo-card img { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; background: var(--sage); }
+  .photo-card .name { font-weight: 700; font-size: 15px; margin: 14px 0 0; color: var(--ink); }
+  .photo-card .title { font-size: 13px; color: var(--mid); margin: 2px 0 0; }
+  .photo-card .quote { font-size: 13px; color: var(--mid); margin: 8px 0 0; font-style: italic; }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 44px; padding-top: 44px; }
+    .photo-card { justify-self: start; max-width: 300px; }
+  }
 
   /* Filters */
   .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 24px; }
@@ -174,13 +190,28 @@
 
 <header>
   <div class="wrap hero">
-    <h1>Ask better questions about your ministry.</h1>
-    <p>Most church staff I work with have tried ChatGPT and walked away with something vague. Usually the problem isn't the tool. It's the question. These are the prompts I'd hand you if we were sitting at the same table: pick one, fill in your details, and paste it in.</p>
-    <p class="sig">Amber Smart, Smart Metrix Founder</p>
+    <div>
+      <div class="eyebrow">Free AI prompt kit for ministry leaders</div>
+      <h1>Ask better questions <span>about your ministry.</span></h1>
+      <p>Most church staff I work with have tried ChatGPT and walked away with something vague. Usually the problem isn't the tool. It's the question. These are the prompts I'd hand you if we were sitting at the same table: pick one, fill in your details, and paste it in.</p>
+      <div class="hero-actions">
+        <a class="primary" href="#prompts">Browse the prompts &darr;&#xFE0E;</a>
+        <a class="text" href="https://www.smartmetrixdata.com/contact-us">Bring us a question &nearr;&#xFE0E;</a>
+      </div>
+      <p class="helper">Free to use. No sign-up needed.</p>
+    </div>
+    <figure class="photo-card" style="margin-top:0;margin-bottom:0">
+      <img src="https://images.squarespace-cdn.com/content/v1/615763ef6f404d3ad0844bb9/84b13b52-4697-4ad5-aa52-13fa0596cf9c/amber_smart_header_2.jpg?format=750w" alt="Amber Smart, founder of Smart Metrix">
+      <figcaption>
+        <p class="name">Amber Smart</p>
+        <p class="title">Smart Metrix Founder</p>
+        <p class="quote">Helping leaders understand the people behind the numbers.</p>
+      </figcaption>
+    </figure>
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="prompts">
   <div class="filters" role="group" aria-label="Filter prompts by category" id="filters"></div>
   <div class="grid" id="grid"></div>
 </main>
