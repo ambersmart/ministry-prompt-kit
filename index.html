@@ -117,6 +117,17 @@
   footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 14px; color: var(--mid); }
   footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 
+  /* Email signup */
+  .signup { margin-top: 26px; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+  .signup h3 { font-size: 20px; }
+  .signup p { margin: 6px 0 12px; color: var(--mid); font-size: 15px; }
+  .signup form { display: flex; gap: 8px; flex-wrap: wrap; }
+  .signup input { flex: 1 1 220px; }
+  .signup .fine { font-size: 13px; margin: 10px 0 0; }
+  .signup .done { color: var(--ink); font-weight: 700; margin: 0; }
+  .signup-band { padding: 0 0 56px; }
+  .signup-band .signup { margin: 0; max-width: 640px; background: var(--wash); }
+
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; opacity: 0; transition: opacity .2s; z-index: 20; pointer-events: none; }
   .toast.show { opacity: 1; }
 
@@ -168,6 +179,10 @@
   </div>
 </section>
 
+<section class="signup-band">
+  <div class="wrap"><div class="signup" data-signup></div></div>
+</section>
+
 <footer>
   <div class="wrap">
     <span>&copy; 2026 Smart Metrix Data. Your impact, made visible.</span>
@@ -191,6 +206,7 @@
       <button class="btn ghost" id="reset">Clear blanks</button>
     </div>
     <div class="privacy" id="privacy" hidden><strong>Protect people's privacy:</strong> before pasting a list of names, swap them for initials or ID numbers. Never paste giving amounts tied to names, or contact info, into a public AI tool.</div>
+    <div class="signup" data-signup></div>
     <div class="nudge">Want to ask this question of your real data, without pasting anything? <a href="https://lumen.dataforgood.com" target="_blank" rel="noopener">Try Lumen</a>.</div>
   </div>
 </aside>
@@ -413,6 +429,44 @@ $("reset").addEventListener("click", () => { values = {}; $("fields").reset(); r
 $("close").addEventListener("click", closePanel);
 $("overlay").addEventListener("click", closePanel);
 document.addEventListener("keydown", e => { if (e.key === "Escape" && current) closePanel(); });
+
+// Email signup: sends to the "Prompt Page Signup" Google Form, which feeds its Google Sheet.
+const SIGNUP_ACTION = "https://docs.google.com/forms/d/e/1FAIpQLSfdSbrwPviUU7yA9vzREgFCvEDnXYdCAlOofazRPJfBVCPfWg/formResponse";
+const SIGNUP_FIELD = "entry.1642001282";
+const PAGE_LOADED = Date.now();
+const SIGNUP_HTML = `
+  <h3>Get a new prompt each month</h3>
+  <p>One fresh ministry data prompt, delivered with the free <em>What Counts</em> newsletter.</p>
+  <form>
+    <input type="email" required placeholder="you@yourchurch.org" aria-label="Email address">
+    <button class="btn" type="submit">Send me prompts</button>
+  </form>
+  <p class="fine">Sent by Smart Metrix Data. We only use your email for this newsletter, never sell or share it, and you can unsubscribe anytime. We will never ask for a password or payment.</p>`;
+const THANKS_HTML = `<h3>You're on the list.</h3><p class="done">Your first prompt arrives with the next What Counts newsletter. Thank you!</p>`;
+// Storage can be blocked (private mode, strict settings), so never let it break the page.
+const signedUp = () => { try { return localStorage.getItem("mpk-signed-up"); } catch { return null; } };
+const markSignedUp = () => { try { localStorage.setItem("mpk-signed-up", "1"); } catch {} };
+
+document.querySelectorAll("[data-signup]").forEach(box => { box.innerHTML = signedUp() ? THANKS_HTML : SIGNUP_HTML; });
+
+document.addEventListener("submit", async e => {
+  const box = e.target.closest("[data-signup]");
+  if (!box) return;
+  e.preventDefault();
+  // Time trap: bots submit instantly after the page loads.
+  if (Date.now() - PAGE_LOADED < 3000) return;
+  const email = box.querySelector("input").value.trim();
+  const btn = box.querySelector("button");
+  btn.disabled = true; btn.textContent = "Sending...";
+  try {
+    await fetch(SIGNUP_ACTION, { method: "POST", mode: "no-cors", body: new URLSearchParams({ [SIGNUP_FIELD]: email }) });
+    markSignedUp();
+    document.querySelectorAll("[data-signup]").forEach(b => { b.innerHTML = THANKS_HTML; });
+  } catch {
+    btn.disabled = false; btn.textContent = "Send me prompts";
+    toast("Something went wrong. Please try again.");
+  }
+});
 
 renderFilters();
 renderGrid();
