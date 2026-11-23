@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ministry AI Prompt Kit | Smart Metrix Data</title>
+<meta name="description" content="Free fill-in-the-blank AI prompts for church and ministry leaders who want clear answers from their data.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #26312D;
+    --mid: #445A56;
+    --sage: #9FB7AC;
+    --wash: #EDF3F0;
+    --green: #6b857d;
+    --paper: #FBFCFB;
+    --line: #D6E1DC;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Nunito Sans", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.55;
+    font-size: 17px;
+  }
+  h1, h2, h3 { font-family: "Fraunces", Georgia, serif; font-weight: 600; line-height: 1.15; margin: 0; }
+  a { color: var(--mid); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  header { background: var(--wash); border-bottom: 1px solid var(--line); }
+  .hero { padding: 64px 24px 48px; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 14px; }
+  .hero h1 { font-size: clamp(34px, 5vw, 52px); max-width: 16ch; }
+  .hero p { max-width: 58ch; color: var(--mid); font-size: 19px; margin: 18px 0 0; }
+  .steps { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 30px; font-size: 15px; color: var(--mid); }
+  .steps span b { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 13px; margin-right: 8px; }
+
+  /* Filters */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 40px 0 24px; }
+  .chip {
+    font: inherit; font-size: 15px; font-weight: 600;
+    padding: 8px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: #fff; color: var(--mid); cursor: pointer;
+  }
+  .chip:hover { border-color: var(--sage); }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+  /* Cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; padding-bottom: 56px; }
+  .card {
+    text-align: left; font: inherit; color: inherit;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; cursor: pointer; display: flex; flex-direction: column; gap: 10px;
+    transition: border-color .15s, transform .15s;
+  }
+  .card:hover, .card:focus-visible { border-color: var(--green); transform: translateY(-2px); outline: none; }
+  .card .cat { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; color: var(--green); }
+  .card h3 { font-size: 21px; }
+  .card p { margin: 0; color: var(--mid); font-size: 15px; }
+  .card .go { margin-top: auto; font-weight: 700; font-size: 14px; color: var(--ink); }
+
+  /* Builder panel */
+  .overlay { position: fixed; inset: 0; background: rgba(38,49,45,.45); display: none; z-index: 10; }
+  .overlay.open { display: block; }
+  .panel {
+    position: fixed; top: 0; right: 0; height: 100%; width: min(620px, 100%);
+    background: var(--paper); z-index: 11; overflow-y: auto;
+    transform: translateX(100%); transition: transform .25s ease;
+    box-shadow: -8px 0 30px rgba(0,0,0,.12);
+  }
+  .panel.open { transform: none; }
+  .panel-inner { padding: 32px 32px 48px; }
+  .close { float: right; font: inherit; font-size: 26px; line-height: 1; background: none; border: 0; cursor: pointer; color: var(--mid); padding: 4px 8px; }
+  .panel h2 { font-size: 28px; margin: 6px 0 8px; }
+  .panel .why { color: var(--mid); margin: 0 0 24px; }
+  label { display: block; font-weight: 700; font-size: 14px; margin: 16px 0 6px; }
+  label small { font-weight: 400; color: var(--green); }
+  input, textarea {
+    width: 100%; font: inherit; font-size: 16px; color: var(--ink);
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  textarea { min-height: 90px; resize: vertical; }
+  input:focus, textarea:focus { outline: 2px solid var(--sage); border-color: var(--green); }
+  .preview-label { margin-top: 28px; display: flex; justify-content: space-between; align-items: baseline; }
+  .preview {
+    background: var(--wash); border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px; white-space: pre-wrap; font-size: 15px; margin-top: 6px;
+  }
+  .preview mark { background: #fff; color: var(--green); border: 1px dashed var(--sage); border-radius: 4px; padding: 0 4px; font-weight: 700; }
+  .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-weight: 700; font-size: 15px;
+    padding: 12px 20px; border-radius: 8px; border: 0; cursor: pointer;
+    background: var(--ink); color: #fff; text-decoration: none; display: inline-block;
+  }
+  .btn.ghost { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .privacy { margin-top: 22px; font-size: 14px; color: var(--mid); background: #fff; border-left: 3px solid var(--sage); padding: 10px 14px; border-radius: 0 6px 6px 0; }
+  .nudge { margin-top: 26px; padding: 18px; border-radius: var(--radius); background: var(--ink); color: #fff; font-size: 15px; }
+  .nudge a { color: var(--sage); font-weight: 700; }
+
+  /* Bottom sections */
+  .band { background: var(--ink); color: #fff; padding: 56px 0; }
+  .band .wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+  .band h2 { font-size: 32px; }
+  .band p { color: #CFDDD6; margin: 12px 0 0; }
+  .band .btn { background: var(--sage); color: var(--ink); }
+  .tips { padding: 56px 0; }
+  .tips h2 { font-size: 28px; margin-bottom: 18px; }
+  .tips ul { padding-left: 20px; margin: 0; color: var(--mid); max-width: 70ch; }
+  .tips li { margin-bottom: 8px; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 14px; color: var(--mid); }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px; font-weight: 700; opacity: 0; transition: opacity .2s; z-index: 20; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 720px) {
+    .band .wrap { grid-template-columns: 1fr; }
+    .panel-inner { padding: 24px 20px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hero">
+    <div class="eyebrow">Free from Smart Metrix Data</div>
+    <h1>The Ministry AI Prompt Kit</h1>
+    <p>Ten fill-in-the-blank prompts that help church leaders get clear, useful answers from AI tools like ChatGPT and Claude, especially when it comes to your data.</p>
+    <div class="steps">
+      <span><b>1</b>Pick a task</span>
+      <span><b>2</b>Fill in the blanks</span>
+      <span><b>3</b>Copy and paste into your AI tool</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="filters" role="group" aria-label="Filter prompts by category" id="filters"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<section class="band">
+  <div class="wrap">
+    <div>
+      <h2>Tired of pasting spreadsheets?</h2>
+      <p>Lumen connects to your church's data so you can ask questions in plain English and get answers and dashboards back. No copying, no pasting, no rebuilding the same report every month.</p>
+    </div>
+    <div><a class="btn" href="https://lumen.dataforgood.com" target="_blank" rel="noopener">See Lumen &rarr;</a></div>
+  </div>
+</section>
+
+<section class="tips">
+  <div class="wrap">
+    <h2>Four habits for better AI answers</h2>
+    <ul>
+      <li><strong>Say who you are.</strong> "I'm a youth pastor at a church of 800" gets a far better answer than no context at all.</li>
+      <li><strong>Give it real numbers.</strong> AI guesses when it doesn't have data. Paste the numbers instead of describing them.</li>
+      <li><strong>Name the audience.</strong> A board, a volunteer team, and a lead pastor each need a different answer.</li>
+      <li><strong>Ask again.</strong> If the first answer misses, reply with "shorter," "simpler," or "focus on the kids ministry." It's a conversation.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>&copy; 2026 Smart Metrix Data. Your impact, made visible.</span>
+    <!-- TODO: point to the newsletter signup page once the URL is final -->
+    <a href="https://smartmetrixdata.com" target="_blank" rel="noopener">Get the What Counts newsletter</a>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">
+  <div class="panel-inner">
+    <button class="close" id="close" aria-label="Close">&times;</button>
+    <div class="eyebrow" id="p-cat"></div>
+    <h2 id="p-title"></h2>
+    <p class="why" id="p-why"></p>
+    <form id="fields" onsubmit="return false"></form>
+    <div class="preview-label"><label style="margin:0">Your prompt</label><small id="p-count"></small></div>
+    <div class="preview" id="preview" aria-live="polite"></div>
+    <div class="actions">
+      <button class="btn" id="copy">Copy prompt</button>
+      <button class="btn ghost" id="reset">Clear blanks</button>
+    </div>
+    <div class="privacy" id="privacy" hidden><strong>Protect people's privacy:</strong> before pasting a list of names, swap them for initials or ID numbers. Never paste giving amounts tied to names, or contact info, into a public AI tool.</div>
+    <div class="nudge">Want to ask this question of your real data, without pasting anything? <a href="https://lumen.dataforgood.com" target="_blank" rel="noopener">Try Lumen</a>.</div>
+  </div>
+</aside>
+
+<div class="toast" id="toast">Copied! Paste it into ChatGPT or Claude.</div>
+
+<script>
+// Each prompt: text uses {key} for blanks. fields define the inputs in order.
+const PROMPTS = [
+  {
+    id: "board-summary", cat: "Board & leadership", title: "Board-ready summary",
+    blurb: "Turn raw numbers into a one-page summary your board can act on.",
+    privacy: false,
+    fields: [
+      { key: "role", label: "Your role", ph: "Executive pastor" },
+      { key: "size", label: "Church size", ph: "1,200 people" },
+      { key: "metric", label: "What kind of data", ph: "attendance" },
+      { key: "period", label: "Time period", ph: "January to June 2026" },
+      { key: "data", label: "Paste your data", ph: "Month, Attendance\nJan, 1,140\nFeb, 1,185 ...", long: true }
+    ],
+    text: "I'm a {role} at a church of about {size}. Here is our {metric} data for {period}:\n\n{data}\n\nWrite a one-page summary for our board. Lead with the single most important takeaway, give 3 supporting points in plain language, and end with one recommended decision. No jargon."
+  },
+  {
+    id: "explain-number", cat: "Board & leadership", title: "Explain a number",
+    blurb: "Something went up or down. Find the likely reasons and how to check them.",
+    privacy: false,
+    fields: [
+      { key: "metric", label: "Which number", ph: "weekend attendance" },
+      { key: "old", label: "Old number", ph: "950" },
+      { key: "new", label: "New number", ph: "820" },
+      { key: "a", label: "Earlier period", ph: "fall 2025" },
+      { key: "b", label: "Later period", ph: "fall 2026" }
+    ],
+    text: "Our {metric} went from {old} to {new} between {a} and {b}. List the 5 most likely reasons a church might see this change, ranked from most to least likely. For each, tell me what data I could check to confirm or rule it out."
+  },
+  {
+    id: "chart-story", cat: "Board & leadership", title: "Turn a chart into a story",
+    blurb: "Write a takeaway title and caption for a slide in under a minute.",
+    privacy: false,
+    fields: [
+      { key: "chart", label: "Describe the chart or paste its data", ph: "Line chart of adult vs. kids attendance, 2023 to 2026. Kids is back to 2019 levels, adults are 15% below.", long: true }
+    ],
+    text: "Here's what this chart shows:\n\n{chart}\n\nWrite a 3-sentence caption for a board slide. The title should be a full-sentence takeaway, not a label (for example, \"Kids attendance recovered faster than adults\" instead of \"Attendance by age\")."
+  },
+  {
+    id: "slipping-away", cat: "Your people", title: "Find who's slipping away",
+    blurb: "Spot regular attenders who've quietly dropped off, and plan a kind follow-up.",
+    privacy: true,
+    fields: [
+      { key: "data", label: "Paste attendance for the last 6 months", ph: "Person ID, Week 1, Week 2, ...\nA-104, Y, Y, N, ...", long: true },
+      { key: "weeks", label: "Missing for how many weeks?", ph: "4" }
+    ],
+    text: "Here's a list of people with their last 6 months of attendance:\n\n{data}\n\nIdentify who was attending regularly but has dropped off in the last {weeks} weeks. Group them by how long they've been gone, and suggest a gentle follow-up approach for each group."
+  },
+  {
+    id: "volunteer-health", cat: "Your people", title: "Volunteer health check",
+    blurb: "See who's burning out, who's drifted away, and which teams need help.",
+    privacy: true,
+    fields: [
+      { key: "data", label: "Paste your volunteer roster with serve dates", ph: "Volunteer ID, Team, Dates served\nV-12, Kids, 9/7, 9/14, 9/21 ...", long: true },
+      { key: "months", label: "Inactive after how many months?", ph: "3" }
+    ],
+    text: "Here's our volunteer roster with serve dates:\n\n{data}\n\nTell me: who's serving too often and at risk of burnout, who hasn't served in {months} months, and which teams are most understaffed. Keep it to a short list I can act on this week."
+  },
+  {
+    id: "survey-results", cat: "Your people", title: "Survey results in plain English",
+    blurb: "Pull the themes and best quotes out of a pile of survey answers.",
+    privacy: true,
+    fields: [
+      { key: "audience", label: "Who took the survey", ph: "small group leaders" },
+      { key: "topic", label: "What it was about", ph: "how supported they feel" },
+      { key: "data", label: "Paste the results", ph: "Paste answers here (remove names first)", long: true }
+    ],
+    text: "We surveyed {audience} about {topic}. Here are the results:\n\n{data}\n\nSummarize the 3 biggest themes, note any surprising answers, and pull 2 to 3 quotes that capture how people feel. Write it for a pastor who has 5 minutes."
+  },
+  {
+    id: "define-success", cat: "Planning & impact", title: "Define success for a program",
+    blurb: "Decide what to count and what to ask before a program launches.",
+    privacy: false,
+    fields: [
+      { key: "program", label: "Program name", ph: "Marriage Mentors" },
+      { key: "goal", label: "What it aims to do", ph: "help newly married couples build healthy habits" }
+    ],
+    text: "We're launching {program}, which aims to {goal}. Help me define what success looks like. Give me 3 things we can count (attendance, completions, etc.) and 2 signs of real life change we could ask about in a short survey. Keep it simple enough for a small staff to track."
+  },
+  {
+    id: "feedback-survey", cat: "Planning & impact", title: "Write a feedback survey",
+    blurb: "Six questions that tell you whether to keep, change, or stop a program.",
+    privacy: false,
+    fields: [
+      { key: "event", label: "Event or program", ph: "our fall women's retreat" }
+    ],
+    text: "Write a 6-question survey for people who attended {event}. Mix rating questions and one open-ended question. Each question should help us decide whether to keep, change, or stop this program."
+  },
+  {
+    id: "year-over-year", cat: "Planning & impact", title: "Year-over-year comparison",
+    blurb: "Compare this year to last, accounting for Easter and holiday shifts.",
+    privacy: false,
+    fields: [
+      { key: "metric", label: "Which number", ph: "giving" },
+      { key: "data", label: "Paste this year and last year by month", ph: "Month, 2025, 2026\nJan, 82,000, 85,500 ...", long: true }
+    ],
+    text: "Here's our {metric} for this year and last year by month:\n\n{data}\n\nCompare them. Point out which months were meaningfully different (not just small ups and downs), account for holidays like Easter and Christmas shifting dates, and tell me if the overall trend is up, down, or flat."
+  },
+  {
+    id: "thank-you", cat: "Communication", title: "Data-backed thank-you",
+    blurb: "A warm thank-you note that shows people the real impact they made.",
+    privacy: false,
+    fields: [
+      { key: "who", label: "Who you're thanking", ph: "volunteers" },
+      { key: "stats", label: "2 to 3 real numbers", ph: "312 kids served at VBS, 48 first-time families, 1,900 meals packed", long: true }
+    ],
+    text: "Write a short thank-you message to our {who}. Include these real numbers to show their impact: {stats}. Make it warm and personal, not corporate. Under 150 words."
+  }
+];
+
+const CATS = ["All", ...new Set(PROMPTS.map(p => p.cat))];
+const $ = id => document.getElementById(id);
+let current = null;
+let values = {};
+let activeCat = "All";
+
+function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function renderFilters() {
+  $("filters").innerHTML = CATS.map(c =>
+    `<button class="chip" aria-pressed="${c === activeCat}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+
+function renderGrid() {
+  const list = PROMPTS.filter(p => activeCat === "All" || p.cat === activeCat);
+  $("grid").innerHTML = list.map(p => `
+    <button class="card" data-id="${p.id}">
+      <span class="cat">${esc(p.cat)}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.blurb)}</p>
+      <span class="go">Fill in the blanks &rarr;</span>
+    </button>`).join("");
+}
+
+function fill() {
+  // Plain-text prompt for copying; unfilled blanks stay as [label].
+  return current.text.replace(/\{(\w+)\}/g, (_, k) => {
+    const f = current.fields.find(x => x.key === k);
+    return (values[k] || "").trim() || `[${f.label.toLowerCase()}]`;
+  });
+}
+
+function renderPreview() {
+  // Escape static text, keep highlighted blanks.
+  const parts = current.text.split(/(\{\w+\})/);
+  $("preview").innerHTML = parts.map(part => {
+    const m = part.match(/^\{(\w+)\}$/);
+    if (!m) return esc(part);
+    const f = current.fields.find(x => x.key === m[1]);
+    const v = (values[m[1]] || "").trim();
+    return v ? esc(v) : `<mark>${esc(f.label.toLowerCase())}</mark>`;
+  }).join("");
+  const done = current.fields.filter(f => (values[f.key] || "").trim()).length;
+  $("p-count").textContent = `${done} of ${current.fields.length} blanks filled`;
+}
+
+function openPanel(id) {
+  current = PROMPTS.find(p => p.id === id);
+  values = {};
+  $("p-cat").textContent = current.cat;
+  $("p-title").textContent = current.title;
+  $("p-why").textContent = current.blurb;
+  $("privacy").hidden = !current.privacy;
+  $("fields").innerHTML = current.fields.map(f => `
+    <label for="f-${f.key}">${esc(f.label)}</label>
+    ${f.long
+      ? `<textarea id="f-${f.key}" data-key="${f.key}" placeholder="${esc(f.ph)}"></textarea>`
+      : `<input id="f-${f.key}" data-key="${f.key}" placeholder="${esc(f.ph)}">`}`).join("");
+  renderPreview();
+  $("overlay").classList.add("open");
+  $("panel").classList.add("open");
+  history.replaceState(null, "", "#" + id);
+  setTimeout(() => { const first = $("fields").querySelector("input,textarea"); if (first) first.focus(); }, 260);
+}
+
+function closePanel() {
+  $("overlay").classList.remove("open");
+  $("panel").classList.remove("open");
+  history.replaceState(null, "", location.pathname);
+}
+
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+async function copyPrompt() {
+  const text = fill();
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+  const missing = current.fields.length - current.fields.filter(f => (values[f.key] || "").trim()).length;
+  toast(missing ? `Copied, with ${missing} blank${missing > 1 ? "s" : ""} still to fill.` : "Copied! Paste it into ChatGPT or Claude.");
+}
+
+$("filters").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  activeCat = b.dataset.cat; renderFilters(); renderGrid();
+});
+$("grid").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if (c) openPanel(c.dataset.id);
+});
+$("fields").addEventListener("input", e => {
+  values[e.target.dataset.key] = e.target.value; renderPreview();
+});
+$("copy").addEventListener("click", copyPrompt);
+$("reset").addEventListener("click", () => { values = {}; $("fields").reset(); renderPreview(); });
+$("close").addEventListener("click", closePanel);
+$("overlay").addEventListener("click", closePanel);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && current) closePanel(); });
+
+renderFilters();
+renderGrid();
+// Deep link: page.html#board-summary opens that prompt directly.
+if (location.hash && PROMPTS.some(p => p.id === location.hash.slice(1))) openPanel(location.hash.slice(1));
+</script>
+</body>
+</html>
